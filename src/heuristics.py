@@ -1,28 +1,26 @@
 from enum import Enum
+import numpy as np
+from board import *
 
 
-class Color(Enum):
-    BLACK = 0
-    WHITE = 1
-
-
-def disc_difference(color):
+def disc_difference(board, color):
     print("calculate disc difference")
     # TODO: count white and black on board
-    white_count = 0
-    black_count = 0
+    white_count = np.count_nonzero(board.board_status == -1)
+    black_count = np.count_nonzero(board.board_status == 1)
 
     curr_count = white_count if color is Color.WHITE else black_count
     opponent_count = white_count if color is Color.BLACK else white_count
 
+    print(100 * (curr_count - opponent_count) / (curr_count + opponent_count))
     return 100 * (curr_count - opponent_count) / (curr_count + opponent_count)
 
 
-def immediate_mobility(color):
+def immediate_mobility(board, color):
     print("calculate immediate mobility")
     # TODO: find number of possible moves for black and white
-    white_moves = 0
-    black_moves = 0
+    white_moves = board.get_num_possible_moves(-1)
+    black_moves = board.get_num_possible_moves(1)
 
     curr_moves = white_moves if color is Color.WHITE else black_moves
     opponent_moves = white_moves if color is Color.BLACK else white_moves
