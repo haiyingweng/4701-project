@@ -1,29 +1,29 @@
-from enum import Enum
 import numpy as np
 from board import *
+
+# TODO: calculate the weighted score of the current state of board
+def calculate_state_score(board):
+    print("calculate score of state")
 
 
 def disc_difference(board, color):
     print("calculate disc difference")
-    # TODO: count white and black on board
     white_count = np.count_nonzero(board.board_status == -1)
     black_count = np.count_nonzero(board.board_status == 1)
 
     curr_count = white_count if color is Color.WHITE else black_count
-    opponent_count = white_count if color is Color.BLACK else white_count
+    opponent_count = white_count if color is Color.BLACK else black_count
 
-    print(100 * (curr_count - opponent_count) / (curr_count + opponent_count))
     return 100 * (curr_count - opponent_count) / (curr_count + opponent_count)
 
 
 def immediate_mobility(board, color):
     print("calculate immediate mobility")
-    # TODO: find number of possible moves for black and white
     white_moves = board.get_num_possible_moves(-1)
     black_moves = board.get_num_possible_moves(1)
 
     curr_moves = white_moves if color is Color.WHITE else black_moves
-    opponent_moves = white_moves if color is Color.BLACK else white_moves
+    opponent_moves = white_moves if color is Color.BLACK else black_moves
 
     if curr_moves + opponent_moves != 0:
         return 100 * (curr_moves - opponent_moves) / (curr_moves + opponent_moves)
@@ -31,14 +31,13 @@ def immediate_mobility(board, color):
         return 0
 
 
-def potential_mobility(color):
+def potential_mobility(board, color):
     print("calculate potential mobility")
-    # TODO: find number of potential  moves for black and white
-    white_moves = 0
-    black_moves = 0
+    white_moves = board.get_num_potential_moves(-1)
+    black_moves = board.get_num_potential_moves(1)
 
     curr_moves = white_moves if color is Color.WHITE else black_moves
-    opponent_moves = white_moves if color is Color.BLACK else white_moves
+    opponent_moves = white_moves if color is Color.BLACK else black_moves
 
     if curr_moves + opponent_moves != 0:
         return 100 * (curr_moves - opponent_moves) / (curr_moves + opponent_moves)
