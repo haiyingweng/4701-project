@@ -46,3 +46,22 @@ def potential_mobility(color):
         return 100 * (curr_moves - opponent_moves) / (curr_moves + opponent_moves)
     else:
         return 0
+
+
+def corner_value(color):
+    print("calculate corner")
+    # TODO: find corner values for black and white
+    white_corner_val = 0
+    black_corner_val = 0
+
+    curr_corner_val = white_corner_val if color is Color.WHITE else black_corner_val
+    opponent_corner_val = white_corner_val if color is Color.BLACK else black_corner_val
+
+    if curr_corner_val + opponent_corner_val != 0:
+        return (
+            100
+            * (curr_corner_val - opponent_corner_val)
+            / (curr_corner_val + opponent_corner_val)
+        )
+    else:
+        return 0
