@@ -4,12 +4,43 @@ from board import *
 # all methods' arg color should be Color.WHITE or Color.BLACK
 
 # TODO: calculate the weighted score of the current state of board
-def calculate_state_score(board):
-    print("calculate score of state")
+def calculate_state_score(board, color):
+    # print("calculate score of state")
+    if board.is_end_game():
+        white_count = np.count_nonzero(board.board_status == -1)
+        black_count = np.count_nonzero(board.board_status == 1)
+        curr_count = white_count - black_count if color is Color.WHITE else black_count - white_count
+        return 1000*curr_count
+    
+    discs_count = np.count_nonzero(board.board_status)
+    # print('disc_difference',disc_difference(board, color))
+    # print('immediate_mobility',immediate_mobility(board, color))
+    # print('potential_mobility',potential_mobility(board, color))
+    # print('corner_difference',corner_difference(board, color))
+    # print('corner_value',corner_value(board, color))
+    # print('stability',stability(board, color))
+
+    if discs_count <= 20: # start of game
+        return 100*immediate_mobility(board, color) \
+        +100*potential_mobility(board, color) \
+        +1000*corner_difference(board, color) \
+        +100*corner_value(board, color) \
+        +1000*stability(board, color)
+    elif discs_count <= 56: # mid game
+        return 10*disc_difference(board, color) \
+        +10*immediate_mobility(board, color) \
+        +10*potential_mobility(board, color) \
+        +1000*corner_difference(board, color) \
+        +100*corner_value(board, color) \
+        +1000*stability(board, color)
+    else: # towards end of game
+       return 1000*disc_difference(board, color) \
+        +100*corner_difference(board, color) \
+        +100*corner_value(board, color) \
+        +100*stability(board, color)
 
 
 def disc_difference(board, color):
-    print("calculate disc difference")
     white_count = np.count_nonzero(board.board_status == -1)
     black_count = np.count_nonzero(board.board_status == 1)
 
@@ -20,7 +51,6 @@ def disc_difference(board, color):
 
 
 def immediate_mobility(board, color):
-    print("calculate immediate mobility")
     white_moves = board.get_num_possible_moves(-1)
     black_moves = board.get_num_possible_moves(1)
 
@@ -34,7 +64,6 @@ def immediate_mobility(board, color):
 
 
 def potential_mobility(board, color):
-    print("calculate potential mobility")
     white_moves = board.get_num_potential_moves(-1)
     black_moves = board.get_num_potential_moves(1)
 
@@ -48,7 +77,6 @@ def potential_mobility(board, color):
 
 
 def corner_difference(board, color):
-    print("calculate corner count difference")
     corners = [(0, 0), (0, 7), (7, 0), (7, 7)]
     white_corner_val = 0
     black_corner_val = 0
@@ -71,7 +99,6 @@ def corner_difference(board, color):
 
 # corners and potential corners weighted positively and giving opponent corners weighted negatively
 def corner_value(board, color):
-    print("calculate corner value")
     weights = np.array(
         [
             [20, -10, 10, 5, 5, 10, -10, 20],

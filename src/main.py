@@ -1,7 +1,9 @@
 from board import *
 from heuristics import *
 from tkinter import *
+from search import *
 import numpy as np
+import time
 
 board_size = 560
 board_color = "#485d3f"
@@ -15,7 +17,10 @@ class Othello:
         self.canvas = Canvas(
             self.window, width=board_size, height=board_size, bg=board_color
         )
+        self.label = Label(self.window, text="It's your turn!", font=("Arial", 25))
         self.canvas.pack()
+        self.label.pack()
+
         self.window.bind("<Button-1>", self.click)
 
         self.init_board()
@@ -76,24 +81,63 @@ class Othello:
         return np.array(pixel_position // (board_size / 8), dtype=int)
 
     def click(self, event):
-        pixel_position = [event.x, event.y]
-        board_position = self.pixel_to_board_position(pixel_position)
-        print("tile position:", board_position)
-        color = 1 if self.player_Bs_move else -1
-        is_valid_move = self.board.is_valid_move(board_position, color)
-        if not is_valid_move:
-            print("sorry you can't put your piece there ;-;")
+        self.label["text"] = ""
+        if not self.board.is_end_game():
+            pixel_position = [event.x, event.y]
+            board_position = self.pixel_to_board_position(pixel_position)
+            print("tile position:", board_position)
+            color = 1 if self.player_Bs_move else -1
+            is_valid_move = self.board.is_valid_move(board_position, color)
+            if not is_valid_move:
+                self.label["text"] = "sorry you can't put your piece there ;-; \n pls try another spot!"
+            else:
+                self.draw_piece(board_position, color)
+                self.board.board_status[board_position[1]][board_position[0]] = (
+                    color
+                )
+                self.flip_pieces(board_position)
+                self.player_Bs_move = not self.player_Bs_move
+                self.num_moves += 1
+                print("number of moves made:", self.num_moves)
+                print(self.board.board_status)
 
-        if not self.board.is_tile_taken(board_position) and is_valid_move:
-            self.draw_piece(board_position, color)
-            self.board.board_status[board_position[1]][board_position[0]] = (
-                color
-            )
-            self.flip_pieces(board_position)
-            self.player_Bs_move = not self.player_Bs_move
-            self.num_moves += 1
-            print("number of moves made:", self.num_moves)
-            print(self.board.board_status)
+                # ai move
+                if (not self.board.is_end_game() and self.board.get_num_possible_moves(-1) > 0):
+                    self.window.after(100, self.computer_turn)
+                    # if user player has no possible moves
+                    while self.board.get_num_possible_moves(1) == 0 and not self.board.is_end_game():
+                        self.window.after(100, self.computer_turn)
+            if (self.board.get_num_possible_moves(-1) == 0):
+                self.label["text"] = "AI has no possible moves ;-; you can go again!" 
+                print("AI has no possible moves ;-; you can go again!")
+
+            # print possible moves for white
+            print("possible moves", self.board.get_possible_moves(-1))
+
+            if (self.board.is_end_game()):
+                print("END OF GAME")
+                white_count = np.count_nonzero(self.board_status == -1)
+                black_count = np.count_nonzero(self.board_status == 1)
+                print("white discs:", white_count)
+                print("black discs:", black_count)
+                if white_count > black_count:
+                    print("YOU LOST! :'(")
+                    self.label["text"] = "YOU LOST! :'("
+                else:
+                    print("YOU WON! XD")
+                    self.label["text"] = "YOU WON! XD"
+                
+    def computer_turn(self):
+        self.label["text"] = "It's the computer's turn"
+        i, j = ai_move(self.board)
+        # self.window.after(2000, self.draw_piece([j, i], color))
+        self.draw_piece([j,i], -1)
+        self.board.board_status[i][j] = -1
+        # self.window.after(3000, self.flip_pieces([j,i]))
+        self.flip_pieces([j,i])
+        self.num_moves += 1
+        self.player_Bs_move = True
+        self.label["text"] = "It's your turn"
 
     def flip_pieces(self, board_position):
         color = 1 if self.player_Bs_move else -1

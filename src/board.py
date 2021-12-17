@@ -31,6 +31,9 @@ class Board:
         col_idx = board_position[0]
         row_idx = board_position[1]
 
+        if self.is_tile_taken(board_position):
+            return False
+
         # check horizontals
         row_front = self.board_status[row_idx, :col_idx]
         row_back = self.board_status[row_idx, col_idx+1:]
@@ -140,17 +143,29 @@ class Board:
 
     # end game if no more empty tiles or impossible for either player to make another move
     def is_end_game(self):
-        print("checking if is end of game")
-        return 0 in self.board_status or (self.get_num_possible_moves(1) == 0 and self.get_num_possible_moves(0) == 0)
+        is_end = not 0 in self.board_status or (self.get_num_possible_moves(1) == 0 and self.get_num_possible_moves(0) == 0)
+        if is_end:
+            print("END OF GAME")
+            white_count = np.count_nonzero(self.board_status == -1)
+            black_count = np.count_nonzero(self.board_status == 1)
+            print("white discs:", white_count)
+            print("black discs:", black_count)
+            if white_count > black_count:
+                print("YOU LOST! :'(")
+            else:
+                print("YOU WON! XD")
+        return is_end
 
-    def get_num_possible_moves(self, color):
-        count = 0
+    def get_possible_moves(self, color):
+        moves = []
         for i in range(len(self.board_status)):
             for j in range(len(self.board_status[i])):
-                if self.board_status[i][j] == 0 and self.is_valid_move((i, j), color):
-                    print(i, j)
-                    count += 1
-        return count
+                if self.board_status[i][j] == 0 and self.is_valid_move((j, i), color):
+                    moves.append((i, j))
+        return moves
+
+    def get_num_possible_moves(self, color):
+        return len(self.get_possible_moves(color))
 
     # count number of opponent's discs that are next to an empty space
     def get_num_potential_moves(self, color):
@@ -213,14 +228,12 @@ class Board:
 
     # count number of stable discs
     def get_num_stable_discs(self, color): 
-      print("")
       res1 = self.get_top_left_stable_discs(color)
       res2 = self.get_top_right_stable_discs(color)
       res3 = self.get_bottom_left_stable_discs(color)
       res4 = self.get_bottom_right_stable_discs(color)
       stable_discs = res1 | res2 | res3 | res4
       stable_discs = set(stable_discs)
-      print(stable_discs)
       return len(stable_discs)
 
     # count stable discs starting from corner (0, 0)
