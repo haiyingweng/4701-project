@@ -1,6 +1,8 @@
 import numpy as np
 from board import *
 
+# all methods' arg color should be Color.WHITE or Color.BLACK
+
 # TODO: calculate the weighted score of the current state of board
 def calculate_state_score(board):
     print("calculate score of state")
@@ -72,14 +74,14 @@ def corner_value(board, color):
     print("calculate corner value")
     weights = np.array(
         [
-            [200, -100, 100, 50, 50, 100, -100, 200],
-            [-100, -200, -50, -50, -50, -50, -200, -100],
-            [100, -50, 100, 0, 0, 100, -50, 100],
-            [50, -50, 0, 0, 0, 0, -50, 50],
-            [50, -50, 0, 0, 0, 0, -50, 50],
-            [100, -50, 100, 0, 0, 100, -50, 100],
-            [-100, -200, -50, -50, -50, -50, -200, -100],
-            [200, -100, 100, 50, 50, 100, -100, 200],
+            [20, -10, 10, 5, 5, 10, -10, 20],
+            [-10, -20, -5, -5, -5, -5, -20, -10],
+            [10, -5, 10, 0, 0, 10, -5, 10],
+            [5, -5, 0, 0, 0, 0, -5, 5],
+            [5, -5, 0, 0, 0, 0, -5, 5],
+            [10, -5, 10, 0, 0, 10, -5, 10],
+            [-10, -20, -5, -5, -5, -5, -20, -10],
+            [20, -10, 10, 5, 5, 10, -10, 20],
         ]
     )
 
@@ -109,3 +111,13 @@ def corner_value(board, color):
     black_corner_val = sum
 
     return white_corner_val if color is Color.WHITE else black_corner_val
+
+
+def stability(board, color):
+    white_stability = board.get_num_stable_discs(-1)
+    black_stability = board.get_num_stable_discs(1)
+
+    curr_stb = white_stability if color is Color.WHITE else black_stability
+    opponent_stb = white_stability if color is Color.BLACK else black_stability
+
+    return 100 * (curr_stb - opponent_stb) / (curr_stb + opponent_stb + 1)
