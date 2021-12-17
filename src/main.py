@@ -118,8 +118,8 @@ class Othello:
 
             if (self.board.is_end_game()):
                 print("END OF GAME")
-                white_count = np.count_nonzero(self.board_status == -1)
-                black_count = np.count_nonzero(self.board_status == 1)
+                white_count = np.count_nonzero(self.board.board_status == -1)
+                black_count = np.count_nonzero(self.board.board_status == 1)
                 print("white discs:", white_count)
                 print("black discs:", black_count)
                 if white_count > black_count:
