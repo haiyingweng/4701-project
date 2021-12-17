@@ -132,6 +132,7 @@ class Othello:
     def computer_turn(self):
         print("computer possible moves", self.board.get_possible_moves(1))
         i, j = ai_move(self.board)
+        print("computer's move", (i, j))
         # self.window.after(2000, self.draw_piece([j, i], color))
         self.draw_piece([j,i], -1)
         self.board.board_status[i][j] = -1
