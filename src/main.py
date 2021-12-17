@@ -38,21 +38,24 @@ class Othello:
 
         for i in range(7):
             self.canvas.create_line(
-                0, (i + 1) * board_size / 8, board_size, (i + 1) * board_size / 8
+                0, (i + 1) * board_size /
+                8, board_size, (i + 1) * board_size / 8
             )
 
         for i in range(3, 5):
             for j in range(3, 5):
                 board_position = np.array([i, j])
-                color = "white" if i == j else "black"
+                color = -1 if i == j else 1
                 self.draw_piece(board_position, color)
 
     def mainloop(self):
         self.window.mainloop()
 
+    # color is -1 if white, 1 if black
     def draw_piece(self, board_position, color):
         board_position = np.array(board_position)
         pixel_position = self.board_to_pixel_position(board_position)
+        color = 'black' if color == 1 else 'white'
         self.canvas.create_oval(
             pixel_position[0] - piece_size,
             pixel_position[1] - piece_size,
@@ -76,23 +79,28 @@ class Othello:
         pixel_position = [event.x, event.y]
         board_position = self.pixel_to_board_position(pixel_position)
         print("tile position:", board_position)
+        color = 1 if self.player_Bs_move else -1
+        is_valid_move = self.board.is_valid_move(board_position, color)
+        if not is_valid_move:
+            print("sorry you can't put your piece there ;-;")
 
-        is_valid_move = self.board.is_valid_move(board_position, 1 if self.player_Bs_move else -1)
-        if not is_valid_move: print("sorry you can't put your piece there ;-;")
-
-        if not self.board.is_tile_taken(board_position) \
-            and is_valid_move:
-            color = "black" if self.player_Bs_move else "white"
+        if not self.board.is_tile_taken(board_position) and is_valid_move:
             self.draw_piece(board_position, color)
             self.board.board_status[board_position[1]][board_position[0]] = (
-                1 if color == "black" else -1
+                color
             )
+            self.flip_pieces(board_position)
             self.player_Bs_move = not self.player_Bs_move
             self.num_moves += 1
             print("number of moves made:", self.num_moves)
             print(self.board.board_status)
 
-    # TODO def flip_pieces(self, board_position):
+    def flip_pieces(self, board_position):
+        color = 1 if self.player_Bs_move else -1
+        indices = self.board.get_flippable_pieces(board_position, color)
+        for [r, c] in indices:
+            self.draw_piece([c, r], color)
+            self.board.board_status[r, c] = color
 
 
 game = Othello()

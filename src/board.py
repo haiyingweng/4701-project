@@ -23,36 +23,119 @@ class Board:
         idx1 = len(arr1) - np.where(arr1[::-1] == color)[0] - 1
         idx2 = np.where(arr2 == color)[0]
 
-        return (len(idx1) > 0 and idx1[0] != (len(arr1) - 1) and np.all(arr1[(idx1[0] + 1):] == -color)
-            or len(idx2) > 0 and idx2[0] != 0 and np.all(arr2[:idx2[0]] == -color))
+        return ((len(idx1) > 0 and idx1[0] != (len(arr1) - 1) and np.all(arr1[(idx1[0] + 1):] == -color))
+                or (len(idx2) > 0 and idx2[0] != 0 and np.all(arr2[:idx2[0]] == -color)))
 
     def is_valid_move(self, board_position, color):  # color is -1 if white, 1 if black
         col_idx = board_position[0]
         row_idx = board_position[1]
-        row = self.board_status[row_idx, :]
 
         # check horizontals
         row_front = self.board_status[row_idx, :col_idx]
         row_back = self.board_status[row_idx, col_idx+1:]
-        if self.contains_sandwich(row_front, row_back, color): return True
+        if self.contains_sandwich(row_front, row_back, color):
+            return True
 
         # check verticals
         col_top = self.board_status[:row_idx, col_idx]
         col_bottom = self.board_status[row_idx+1:, col_idx]
-        if self.contains_sandwich(col_top, col_bottom, color): return True
+        if self.contains_sandwich(col_top, col_bottom, color):
+            return True
 
         # check diagonals
         offset = col_idx - row_idx
         diag = np.diagonal(self.board_status, offset)
         upper_left_diag = diag[:(col_idx if offset < 0 else row_idx)]
         lower_right_diag = diag[(col_idx if offset < 0 else row_idx)+1:]
-        if self.contains_sandwich(upper_left_diag, lower_right_diag, color): return True
-        
+        if self.contains_sandwich(upper_left_diag, lower_right_diag, color):
+            return True
+
         flipped_offset = len(self.board_status) - 1 - col_idx - row_idx
-        opposite_diag = np.diagonal(np.fliplr(self.board_status), flipped_offset)
-        upper_right_diag = opposite_diag[:(len(self.board_status) - col_idx - 1 if flipped_offset < 0 else row_idx)]
-        lower_left_diag = opposite_diag[(len(self.board_status) - col_idx - 1 if flipped_offset < 0 else row_idx) + 1:]
-        if self.contains_sandwich(upper_right_diag, lower_left_diag, color): return True
+        opposite_diag = np.diagonal(
+            np.fliplr(self.board_status), flipped_offset)
+        upper_right_diag = opposite_diag[:(
+            len(self.board_status) - col_idx - 1 if flipped_offset < 0 else row_idx)]
+        lower_left_diag = opposite_diag[(
+            len(self.board_status) - col_idx - 1 if flipped_offset < 0 else row_idx) + 1:]
+        if self.contains_sandwich(upper_right_diag, lower_left_diag, color):
+            return True
+
+    # returns array of indices of flippable pieces
+    def get_flippable_pieces(self, board_position, color):
+        col_idx = board_position[0]
+        row_idx = board_position[1]
+        indices = []
+
+        # flip horizontals
+        row_front = self.board_status[row_idx, :col_idx]
+        row_back = self.board_status[row_idx, col_idx+1:]
+
+        if self.contains_sandwich(row_front, [], color):
+            sandwich_idx = (len(row_front) -
+                            np.where(row_front[::-1] == color)[0] - 1)[0]
+            for i in range(sandwich_idx+1, col_idx):
+                indices.append([row_idx, i])
+
+        if self.contains_sandwich([], row_back, color):
+            sandwich_idx = np.where(row_back == color)[0][0]
+            for i in range(col_idx + 1, sandwich_idx + col_idx + 1):
+                indices.append([row_idx, i])
+
+        # flip verticals
+        col_top = self.board_status[:row_idx, col_idx]
+        col_bottom = self.board_status[row_idx+1:, col_idx]
+
+        if self.contains_sandwich(col_top, [], color):
+            sandwich_idx = (
+                len(col_top) - np.where(col_top[::-1] == color)[0] - 1)[0]
+            for i in range(sandwich_idx + 1, row_idx):
+                indices.append([i, col_idx])
+
+        if self.contains_sandwich([], col_bottom, color):
+            sandwich_idx = (len(col_bottom) -
+                            np.where(col_bottom[::-1] == color)[0] - 1)[0]
+            for i in range(row_idx + 1, sandwich_idx + row_idx + 1):
+                indices.append([i, col_idx])
+
+        # flip diagonals
+        offset = col_idx - row_idx
+        diag = np.diagonal(self.board_status, offset)
+        upper_left_diag = diag[:(col_idx if offset < 0 else row_idx)]
+        lower_right_diag = diag[(col_idx if offset < 0 else row_idx)+1:]
+
+        if self.contains_sandwich(upper_left_diag, [], color):
+            sandwich_idx = (
+                len(upper_left_diag) - np.where(upper_left_diag[::-1] == color)[0] - 1)[0]
+            for i in range(1, len(upper_left_diag) - sandwich_idx):
+                indices.append([row_idx - i, col_idx - i])
+
+        if self.contains_sandwich([], lower_right_diag, color):
+            sandwich_idx = (len(lower_right_diag) -
+                            np.where(lower_right_diag[::-1] == color)[0] - 1)[0]
+            for i in range(1, sandwich_idx + 1):
+                indices.append([row_idx + i, col_idx + i])
+
+        flipped_offset = len(self.board_status) - 1 - col_idx - row_idx
+        opposite_diag = np.diagonal(
+            np.fliplr(self.board_status), flipped_offset)
+        upper_right_diag = opposite_diag[:(
+            len(self.board_status) - col_idx - 1 if flipped_offset < 0 else row_idx)]
+        lower_left_diag = opposite_diag[(
+            len(self.board_status) - col_idx - 1 if flipped_offset < 0 else row_idx) + 1:]
+
+        if self.contains_sandwich(upper_right_diag, [], color):
+            sandwich_idx = (
+                len(upper_right_diag) - np.where(upper_right_diag[::-1] == color)[0] - 1)[0]
+            for i in range(1, len(upper_right_diag) - sandwich_idx):
+                indices.append([row_idx - i, col_idx + i])
+
+        if self.contains_sandwich([], lower_left_diag, color):
+            sandwich_idx = (len(lower_left_diag) -
+                            np.where(lower_left_diag[::-1] == color)[0] - 1)[0]
+            for i in range(1, sandwich_idx + 1):
+                indices.append([row_idx + i, col_idx - i])
+                
+        return indices
 
     # end game if no more empty tiles or impossible for either player to make another move
     def is_end_game(self):
