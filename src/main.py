@@ -103,9 +103,11 @@ class Othello:
 
                 # ai move
                 if (not self.board.is_end_game() and self.board.get_num_possible_moves(-1) > 0):
+                    self.label["text"] = "It's the computer's turn"
                     self.window.after(100, self.computer_turn)
                     # if user player has no possible moves
                     while self.board.get_num_possible_moves(1) == 0 and not self.board.is_end_game():
+                        self.label["text"] = "It's the computer's turn"
                         self.window.after(100, self.computer_turn)
             if (self.board.get_num_possible_moves(-1) == 0):
                 self.label["text"] = "AI has no possible moves ;-; you can go again!" 
@@ -128,7 +130,6 @@ class Othello:
                     self.label["text"] = "YOU WON! XD"
                 
     def computer_turn(self):
-        self.label["text"] = "It's the computer's turn"
         i, j = ai_move(self.board)
         # self.window.after(2000, self.draw_piece([j, i], color))
         self.draw_piece([j,i], -1)

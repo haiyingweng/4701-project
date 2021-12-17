@@ -144,16 +144,6 @@ class Board:
     # end game if no more empty tiles or impossible for either player to make another move
     def is_end_game(self):
         is_end = not 0 in self.board_status or (self.get_num_possible_moves(1) == 0 and self.get_num_possible_moves(0) == 0)
-        if is_end:
-            print("END OF GAME")
-            white_count = np.count_nonzero(self.board_status == -1)
-            black_count = np.count_nonzero(self.board_status == 1)
-            print("white discs:", white_count)
-            print("black discs:", black_count)
-            if white_count > black_count:
-                print("YOU LOST! :'(")
-            else:
-                print("YOU WON! XD")
         return is_end
 
     def get_possible_moves(self, color):
