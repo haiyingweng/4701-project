@@ -27,7 +27,7 @@ def calculate_state_score(board, color):
         +100*corner_value(board, color) \
         +1000*stability(board, color)
     elif discs_count <= 56: # mid game
-        return 10*disc_difference(board, color) \
+        return 100*disc_difference(board, color) \
         +10*immediate_mobility(board, color) \
         +10*potential_mobility(board, color) \
         +1000*corner_difference(board, color) \

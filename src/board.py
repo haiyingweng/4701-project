@@ -143,7 +143,7 @@ class Board:
 
     # end game if no more empty tiles or impossible for either player to make another move
     def is_end_game(self):
-        is_end = not 0 in self.board_status or (self.get_num_possible_moves(1) == 0 and self.get_num_possible_moves(0) == 0)
+        is_end = not 0 in self.board_status or (self.get_num_possible_moves(1) == 0 and self.get_num_possible_moves(-1) == 0)
         return is_end
 
     def get_possible_moves(self, color):
