@@ -67,7 +67,7 @@ class Othello:
         board_position = np.array(board_position, dtype=int)
         return (board_size / 8) * board_position + board_size / 16
 
-    # returns coords of board tile, e.g. [0 0]
+    # returns coords of board tile [col, row], e.g. [0 0]
     def pixel_to_board_position(self, pixel_position):
         pixel_position = np.array(pixel_position)
         return np.array(pixel_position // (board_size / 8), dtype=int)
@@ -77,7 +77,11 @@ class Othello:
         board_position = self.pixel_to_board_position(pixel_position)
         print("tile position:", board_position)
 
-        if not self.board.is_tile_taken(board_position):
+        is_valid_move = self.board.is_valid_move(board_position, 1 if self.player_Bs_move else -1)
+        if not is_valid_move: print("sorry you can't put your piece there ;-;")
+
+        if not self.board.is_tile_taken(board_position) \
+            and is_valid_move:
             color = "black" if self.player_Bs_move else "white"
             self.draw_piece(board_position, color)
             self.board.board_status[board_position[1]][board_position[0]] = (

@@ -14,14 +14,50 @@ class Board:
     def is_tile_taken(self, board_position):
         return not self.board_status[board_position[1]][board_position[0]] == 0
 
-    # TODO: check horizontals, verticals, diagonals
-    def is_valid_move(self, board_position, color):  # color is -1 if white, 1 if black
-        row = board_position[0]
-        col = board_position[1]
+    # checks whether there are flippable tiles in arr1 or arr2
+    # where:
+    #  arr1 = array of values "before" the placed piece
+    #  arr2 = array of values "after" the placed piece
+    def contains_sandwich(self, arr1, arr2, color):
+        # indices of [color] pieces in arr1, arr2 respectively
+        idx1 = len(arr1) - np.where(arr1[::-1] == color)[0] - 1
+        idx2 = np.where(arr2 == color)[0]
 
-    # TODO: check if is end game
+        return (len(idx1) > 0 and idx1[0] != (len(arr1) - 1) and np.all(arr1[(idx1[0] + 1):] == -color)
+            or len(idx2) > 0 and idx2[0] != 0 and np.all(arr2[:idx2[0]] == -color))
+
+    def is_valid_move(self, board_position, color):  # color is -1 if white, 1 if black
+        col_idx = board_position[0]
+        row_idx = board_position[1]
+        row = self.board_status[row_idx, :]
+
+        # check horizontals
+        row_front = self.board_status[row_idx, :col_idx]
+        row_back = self.board_status[row_idx, col_idx+1:]
+        if self.contains_sandwich(row_front, row_back, color): return True
+
+        # check verticals
+        col_top = self.board_status[:row_idx, col_idx]
+        col_bottom = self.board_status[row_idx+1:, col_idx]
+        if self.contains_sandwich(col_top, col_bottom, color): return True
+
+        # check diagonals
+        offset = col_idx - row_idx
+        diag = np.diagonal(self.board_status, offset)
+        upper_left_diag = diag[:(col_idx if offset < 0 else row_idx)]
+        lower_right_diag = diag[(col_idx if offset < 0 else row_idx)+1:]
+        if self.contains_sandwich(upper_left_diag, lower_right_diag, color): return True
+        
+        flipped_offset = len(self.board_status) - 1 - col_idx - row_idx
+        opposite_diag = np.diagonal(np.fliplr(self.board_status), flipped_offset)
+        upper_right_diag = opposite_diag[:(len(self.board_status) - col_idx - 1 if flipped_offset < 0 else row_idx)]
+        lower_left_diag = opposite_diag[(len(self.board_status) - col_idx - 1 if flipped_offset < 0 else row_idx) + 1:]
+        if self.contains_sandwich(upper_right_diag, lower_left_diag, color): return True
+
+    # end game if no more empty tiles or impossible for either player to make another move
     def is_end_game(self):
         print("checking if is end of game")
+        return 0 in self.board_status or (self.get_num_possible_moves(1) == 0 and self.get_num_possible_moves(0) == 0)
 
     def get_num_possible_moves(self, color):
         count = 0
