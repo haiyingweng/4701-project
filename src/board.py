@@ -9,6 +9,7 @@ class Color(Enum):
 
 class Board:
     def __init__(self):
+        self.board_size = 8
         self.board_status = np.zeros(shape=(8, 8))
 
     def is_tile_taken(self, board_position):
@@ -61,11 +62,10 @@ class Board:
 
     def get_num_possible_moves(self, color):
         count = 0
-        for i in range(self.board_status.size):
-            for j in range(self.board_status[i].size):
-                if self.board_status[i][j] == color and self.is_valid_move(
-                    (i, j), color
-                ):
+        for i in range(len(self.board_status)):
+            for j in range(len(self.board_status[i])):
+                if self.board_status[i][j] == 0 and self.is_valid_move((i, j), color):
+                    print(i, j)
                     count += 1
         return count
 
@@ -127,3 +127,74 @@ class Board:
                 ):
                     count += 1
         return count
+
+    # count number of stable discs
+    def get_num_stable_discs(self, color): 
+      print("")
+      res1 = self.get_top_left_stable_discs(color)
+      res2 = self.get_top_right_stable_discs(color)
+      res3 = self.get_bottom_left_stable_discs(color)
+      res4 = self.get_bottom_right_stable_discs(color)
+      stable_discs = res1 | res2 | res3 | res4
+      stable_discs = set(stable_discs)
+      print(stable_discs)
+      return len(stable_discs)
+
+    # count stable discs starting from corner (0, 0)
+    def get_top_left_stable_discs(self, color):
+      stable_discs = set()
+      # iterate horizontally 
+      for j in range(self.board_size):
+          if (self.board_status[0][j] == color):
+              # iterate vertically 
+              for i in range(self.board_size):
+                  if (self.board_status[i][j] == color):
+                      stable_discs.add((i, j))
+                  else:
+                      break
+          else:
+              break
+      return stable_discs
+
+    # count stable discs starting from corner (0, 7)
+    def get_top_right_stable_discs(self, color):
+      stable_discs = set()
+      for j in range(self.board_size-1, -1, -1):
+          if (self.board_status[0][j] == color):
+              for i in range(self.board_size):
+                  if (self.board_status[i][j] == color):
+                      stable_discs.add((i, j))
+                  else:
+                      break
+          else:
+              break
+      return stable_discs
+
+    # count stable discs starting from corner (7, 0)
+    def get_bottom_left_stable_discs(self, color):
+      stable_discs = set()
+      for j in range(self.board_size):
+          if (self.board_status[self.board_size-1][j] == color):
+              for i in range(self.board_size-1, -1, -1):
+                  if (self.board_status[i][j] == color):
+                      stable_discs.add((i, j))
+                  else:
+                      break
+          else:
+              break
+      return stable_discs
+
+    # count stable discs starting from corner (7, 7)
+    def get_bottom_right_stable_discs(self, color):
+      stable_discs = set()
+      for j in range(self.board_size-1, -1, -1):
+          if (self.board_status[self.board_size-1][j] == color):
+              for i in range(self.board_size-1, -1, -1):
+                  if (self.board_status[i][j] == color):
+                      stable_discs.add((i, j))
+                  else:
+                      break
+          else:
+              break
+      return stable_discs
+
