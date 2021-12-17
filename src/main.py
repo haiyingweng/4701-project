@@ -114,7 +114,7 @@ class Othello:
                 print("AI has no possible moves ;-; you can go again!")
 
             # print possible moves for white
-            print("possible moves", self.board.get_possible_moves(-1))
+            print("possible moves", self.board.get_possible_moves(1))
 
             if (self.board.is_end_game()):
                 print("END OF GAME")
@@ -130,7 +130,7 @@ class Othello:
                     self.label["text"] = "YOU WON! XD"
                 
     def computer_turn(self):
-        print("computer possible moves", self.board.get_possible_moves(1))
+        print("computer possible moves", self.board.get_possible_moves(-1))
         i, j = ai_move(self.board)
         print("computer's move", (i, j))
         # self.window.after(2000, self.draw_piece([j, i], color))

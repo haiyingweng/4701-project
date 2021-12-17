@@ -63,6 +63,8 @@ class Board:
             len(self.board_status) - col_idx - 1 if flipped_offset < 0 else row_idx) + 1:]
         if self.contains_sandwich(upper_right_diag, lower_left_diag, color):
             return True
+        
+        return False
 
     # returns array of indices of flippable pieces
     def get_flippable_pieces(self, board_position, color):
