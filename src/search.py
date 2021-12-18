@@ -9,7 +9,6 @@ def flip_color(color):
        
 # where color is Color.WHITE or Color.BLACK
 def min_max(board, depth, color):
-    print("min_max" , depth)
     if color == Color.WHITE:
         best = [-1, -1, float('-inf')]
     else:
