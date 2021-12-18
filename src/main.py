@@ -17,7 +17,7 @@ class Othello:
         self.canvas = Canvas(
             self.window, width=board_size, height=board_size, bg=board_color
         )
-        self.label = Label(self.window, text="It's your turn!", font=("Helvetica", 20), bg="white", width=30)
+        self.label = Label(self.window, text="It's your turn!", font=("Helvetica", 20), bg="white", width=40)
         self.canvas.pack()
         self.label.pack()
 
