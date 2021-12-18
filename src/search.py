@@ -39,5 +39,5 @@ def ai_move(board):
     if board.get_num_possible_moves == 1:
         return board.get_possible_moves[0]
 
-    [i, j, score] = min_max(board, 3, Color.WHITE)
+    [i, j, score] = min_max(board, 2, Color.WHITE)
     return (i, j)
