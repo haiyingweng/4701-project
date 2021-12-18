@@ -14,11 +14,14 @@ def min_max(board, depth, color):
     else:
         best = [-1, -1, float('inf')]
 
-    if depth == 0 or board.is_end_game():
+    moves = board.get_possible_moves(-1 if Color.WHITE else 1)
+
+    if depth == 0 or board.is_end_game() or len(moves) == 0:
         score = calculate_state_score(board, color)
         return [-1, -1, score]
-    
-    moves = board.get_possible_moves(-1 if Color.WHITE else 1)
+
+    print("depth", depth)
+    print("moves", moves)
     for (i, j) in moves:
         board.board_status[i][j] = -1 if Color.WHITE else 1
         score = min_max(board, depth - 1, flip_color(color))
