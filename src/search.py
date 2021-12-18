@@ -20,8 +20,6 @@ def min_max(board, depth, color):
         score = calculate_state_score(board, color)
         return [-1, -1, score]
 
-    print("depth", depth)
-    print("moves", moves)
     for (i, j) in moves:
         board.board_status[i][j] = -1 if Color.WHITE else 1
         score = min_max(board, depth - 1, flip_color(color))

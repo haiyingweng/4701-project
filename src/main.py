@@ -122,7 +122,10 @@ class Othello:
                 black_count = np.count_nonzero(self.board.board_status == 1)
                 print("white discs:", white_count)
                 print("black discs:", black_count)
-                if white_count > black_count:
+                if white_count == black_count:
+                    print("TIE")
+                    self.label["text"] = "IT'S A TIE!"
+                elif white_count > black_count:
                     print("YOU LOST! :'(")
                     self.label["text"] = "YOU LOST! :'("
                 else:
