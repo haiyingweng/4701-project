@@ -102,37 +102,78 @@ class Othello:
                 print(self.board.board_status)
 
                 # ai move
-                if (not self.board.is_end_game() and self.board.get_num_possible_moves(-1) > 0):
-                    self.label["text"] = "It's the computer's turn"
-                    self.window.after(100, self.computer_turn)
-                    # if user player has no possible moves
-                    while self.board.get_num_possible_moves(1) == 0 and not self.board.is_end_game():
-                        self.label["text"] = "It's the computer's turn"
-                        self.window.after(100, self.computer_turn)
+                self.label["text"] = "It's the computer's turn"
+                self.window.after(100, self.ai_turn)
+                # if (not self.board.is_end_game() and self.board.get_num_possible_moves(-1) > 0):
+                #     self.label["text"] = "It's the computer's turn"
+                #     self.computer_turn()
+                #     # self.window.after(100, self.computer_turn)
+                #     # if user player has no possible moves
+                #     while self.board.get_num_possible_moves(1) == 0 and not self.board.is_end_game():
+                #         print("while")
+                #         self.label["text"] = "It's the computer's turn"
+                #         # self.window.after(100, self.computer_turn)
+                #         self.computer_turn()
 
-            if (self.board.get_num_possible_moves(-1) == 0):
-                self.label["text"] = "AI has no possible moves ;-; you can go again!" 
-                print("AI has no possible moves ;-; you can go again!")
-                self.player_Bs_move = True
+            # if (self.board.get_num_possible_moves(-1) == 0):
+            #     self.label["text"] = "AI has no possible moves ;-; you can go again!" 
+            #     print("AI has no possible moves ;-; you can go again!")
+            #     self.player_Bs_move = True
 
-            # print possible moves for white
-            print("possible moves", self.board.get_possible_moves(1))
+            # # print possible moves for white
+            # print("possible moves", self.board.get_possible_moves(1))
 
-            if (self.board.is_end_game()):
-                print("END OF GAME")
-                white_count = np.count_nonzero(self.board.board_status == -1)
-                black_count = np.count_nonzero(self.board.board_status == 1)
-                print("white discs:", white_count)
-                print("black discs:", black_count)
-                if white_count == black_count:
-                    print("TIE")
-                    self.label["text"] = "IT'S A TIE!"
-                elif white_count > black_count:
-                    print("YOU LOST! :'(")
-                    self.label["text"] = "YOU LOST! :'("
-                else:
-                    print("YOU WON! XD")
-                    self.label["text"] = "YOU WON! XD"
+            # if (self.board.is_end_game()):
+            #     print("END OF GAME")
+            #     white_count = np.count_nonzero(self.board.board_status == -1)
+            #     black_count = np.count_nonzero(self.board.board_status == 1)
+            #     print("white discs:", white_count)
+            #     print("black discs:", black_count)
+            #     if white_count == black_count:
+            #         print("TIE")
+            #         self.label["text"] = "IT'S A TIE!"
+            #     elif white_count > black_count:
+            #         print("YOU LOST! :'(")
+            #         self.label["text"] = "YOU LOST! :'("
+            #     else:
+            #         print("YOU WON! XD")
+            #         self.label["text"] = "YOU WON! XD"
+
+    def ai_turn(self):
+        if (not self.board.is_end_game() and self.board.get_num_possible_moves(-1) > 0):
+            # self.label["text"] = "It's the computer's turn"
+            self.computer_turn()
+            # self.window.after(100, self.computer_turn)
+            # if user player has no possible moves
+            while self.board.get_num_possible_moves(1) == 0 and not self.board.is_end_game():
+                print("while")
+                self.label["text"] = "It's the computer's turn"
+                # self.window.after(100, self.computer_turn)
+                self.computer_turn()
+
+        if (self.board.get_num_possible_moves(-1) == 0):
+            self.label["text"] = "AI has no possible moves ;-; you can go again!" 
+            print("AI has no possible moves ;-; you can go again!")
+            self.player_Bs_move = True
+
+        # print possible moves for white
+        print("possible moves", self.board.get_possible_moves(1))
+
+        if (self.board.is_end_game()):
+            print("END OF GAME")
+            white_count = np.count_nonzero(self.board.board_status == -1)
+            black_count = np.count_nonzero(self.board.board_status == 1)
+            print("white discs:", white_count)
+            print("black discs:", black_count)
+            if white_count == black_count:
+                print("TIE")
+                self.label["text"] = "IT'S A TIE!"
+            elif white_count > black_count:
+                print("YOU LOST! :'(")
+                self.label["text"] = "YOU LOST! :'("
+            else:
+                print("YOU WON! XD")
+                self.label["text"] = "YOU WON! XD"
                 
     def computer_turn(self):
         print("computer possible moves", self.board.get_possible_moves(-1))
