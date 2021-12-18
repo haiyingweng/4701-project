@@ -109,9 +109,11 @@ class Othello:
                     while self.board.get_num_possible_moves(1) == 0 and not self.board.is_end_game():
                         self.label["text"] = "It's the computer's turn"
                         self.window.after(100, self.computer_turn)
+
             if (self.board.get_num_possible_moves(-1) == 0):
                 self.label["text"] = "AI has no possible moves ;-; you can go again!" 
                 print("AI has no possible moves ;-; you can go again!")
+                self.player_Bs_move = True
 
             # print possible moves for white
             print("possible moves", self.board.get_possible_moves(1))
