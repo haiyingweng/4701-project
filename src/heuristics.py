@@ -3,9 +3,7 @@ from board import *
 
 # all methods' arg color should be Color.WHITE or Color.BLACK
 
-# TODO: calculate the weighted score of the current state of board
 def calculate_state_score(board, color):
-    # print("calculate score of state")
     if board.is_end_game():
         white_count = np.count_nonzero(board.board_status == -1)
         black_count = np.count_nonzero(board.board_status == 1)
@@ -13,12 +11,6 @@ def calculate_state_score(board, color):
         return 1000*curr_count
     
     discs_count = np.count_nonzero(board.board_status)
-    # print('disc_difference',disc_difference(board, color))
-    # print('immediate_mobility',immediate_mobility(board, color))
-    # print('potential_mobility',potential_mobility(board, color))
-    # print('corner_difference',corner_difference(board, color))
-    # print('corner_value',corner_value(board, color))
-    # print('stability',stability(board, color))
 
     if discs_count <= 20: # start of game
         return 100*immediate_mobility(board, color) \

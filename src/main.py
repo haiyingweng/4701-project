@@ -17,7 +17,7 @@ class Othello:
         self.canvas = Canvas(
             self.window, width=board_size, height=board_size, bg=board_color
         )
-        self.label = Label(self.window, text="It's your turn!", font=("Arial", 25))
+        self.label = Label(self.window, text="It's your turn!", font=("Helvetica", 20), bg="white", width=30)
         self.canvas.pack()
         self.label.pack()
 
@@ -29,7 +29,6 @@ class Othello:
         )
         self.num_moves = 0
         self.board = Board()
-        # self.board_status = np.zeros(shape=(8, 8))  # white = -1, empty = 0, black = 1
         for i in range(3, 5):
             for j in range(3, 5):
                 status = -1 if i == j else 1
@@ -104,51 +103,14 @@ class Othello:
                 # ai move
                 self.label["text"] = "It's the computer's turn"
                 self.window.after(100, self.ai_turn)
-                # if (not self.board.is_end_game() and self.board.get_num_possible_moves(-1) > 0):
-                #     self.label["text"] = "It's the computer's turn"
-                #     self.computer_turn()
-                #     # self.window.after(100, self.computer_turn)
-                #     # if user player has no possible moves
-                #     while self.board.get_num_possible_moves(1) == 0 and not self.board.is_end_game():
-                #         print("while")
-                #         self.label["text"] = "It's the computer's turn"
-                #         # self.window.after(100, self.computer_turn)
-                #         self.computer_turn()
-
-            # if (self.board.get_num_possible_moves(-1) == 0):
-            #     self.label["text"] = "AI has no possible moves ;-; you can go again!" 
-            #     print("AI has no possible moves ;-; you can go again!")
-            #     self.player_Bs_move = True
-
-            # # print possible moves for white
-            # print("possible moves", self.board.get_possible_moves(1))
-
-            # if (self.board.is_end_game()):
-            #     print("END OF GAME")
-            #     white_count = np.count_nonzero(self.board.board_status == -1)
-            #     black_count = np.count_nonzero(self.board.board_status == 1)
-            #     print("white discs:", white_count)
-            #     print("black discs:", black_count)
-            #     if white_count == black_count:
-            #         print("TIE")
-            #         self.label["text"] = "IT'S A TIE!"
-            #     elif white_count > black_count:
-            #         print("YOU LOST! :'(")
-            #         self.label["text"] = "YOU LOST! :'("
-            #     else:
-            #         print("YOU WON! XD")
-            #         self.label["text"] = "YOU WON! XD"
 
     def ai_turn(self):
         if (not self.board.is_end_game() and self.board.get_num_possible_moves(-1) > 0):
-            # self.label["text"] = "It's the computer's turn"
             self.computer_turn()
-            # self.window.after(100, self.computer_turn)
             # if user player has no possible moves
             while self.board.get_num_possible_moves(1) == 0 and not self.board.is_end_game():
                 print("while")
                 self.label["text"] = "It's the computer's turn"
-                # self.window.after(100, self.computer_turn)
                 self.computer_turn()
 
         if (self.board.get_num_possible_moves(-1) == 0):
@@ -179,10 +141,8 @@ class Othello:
         print("computer possible moves", self.board.get_possible_moves(-1))
         i, j = ai_move(self.board)
         print("computer's move", (i, j))
-        # self.window.after(2000, self.draw_piece([j, i], color))
         self.draw_piece([j,i], -1)
         self.board.board_status[i][j] = -1
-        # self.window.after(3000, self.flip_pieces([j,i]))
         self.flip_pieces([j,i])
         self.num_moves += 1
         self.player_Bs_move = True
